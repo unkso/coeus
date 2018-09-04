@@ -14,3 +14,7 @@ path = "src/bin/coeus_cli.rs"
 [dependencies]
 docopt = "1.0"
 clap = { version = "2.0", features = ["yaml"] }
+diesel = { version = "1.0", features = ["sqlite"] }
+
+[dev-dependencies]
+diesel_migrations = { version = "1.0", features = ["sqlite"] }

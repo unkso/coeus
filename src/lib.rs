@@ -1,12 +1,10 @@
+#![allow(proc_macro_derive_resolution_fallback)]
+
+#[macro_use] extern crate diesel;
+
 mod parser;
 mod scraper;
 mod cohort;
 mod identifier;
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+mod models;
+mod schema;

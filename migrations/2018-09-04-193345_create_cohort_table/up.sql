@@ -1,0 +1,5 @@
+-- Your SQL goes here
+CREATE TABLE IF NOT EXISTS `cohort` (
+  `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `name`  VARCHAR NOT NULL
+);
