@@ -1,0 +1,57 @@
+name: Coeus
+version: "0.1"
+author: "Unknown Soldiers Engineering Dept <intel@clanunknownsoldiers.com>"
+about: "Scrapes, sorts, and identifies candidates for membership in the Unknown Soldiers"
+args:
+subcommands:
+- cohort:
+    about: Subcommand relating to cohorts of players
+    subcommands:
+    - new:
+        about: Creates a new cohort
+        args:
+        - "cohort name":
+            help: The name of the cohort being created
+            required: true
+    - delete:
+        about: Deletes an existing cohort
+        args:
+        - "cohort name":
+            help: The name of the cohort being deleted
+            required: true
+- scrape:
+    about: Downloads player data for a given cohort
+    args:
+    - "cohort name":
+        help: The cohort the scraped data is being stored into
+        required: true
+    - limit:
+        help: Number of players to scrape and store into the cohort
+        short: l
+        long: limit
+        required: false
+        takes_value: true
+- identify:
+    about: Indentifies players matching the desired profile
+    args:
+    - "cohort name":
+        help: The cohort being used to identify potential members
+        required: true
+    - "minimum activity level":
+        help: Minimum activity level for identified players
+        short: a
+        long: min-activity
+        required: false
+        takes_value: true
+    - "minimum PTFO level":
+        help: Minimum PTFO level for identified players
+        short: p
+        long: min-ptfo
+        required: false
+        takes_value: true
+    - "minimum teamwork level":
+        help: Minimum teamwork level for identified players
+        short: t
+        long: min-teamwork
+        required: false
+        takes_value: true

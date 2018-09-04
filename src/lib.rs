@@ -1,3 +1,8 @@
+mod parser;
+mod scraper;
+mod cohort;
+mod identifier;
+
 #[cfg(test)]
 mod tests {
     #[test]

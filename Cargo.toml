@@ -1,7 +1,7 @@
 [package]
 name = "coeus"
 version = "0.1.0"
-authors = ["Eric Dattore <eric@dattore.me>"]
+authors = ["Unknown Soldiers Engineering Dept <intel@clanunknownsoldiers.com>"]
 
 [lib]
 name = "libcoeus"
@@ -13,5 +13,4 @@ path = "src/bin/coeus_cli.rs"
 
 [dependencies]
 docopt = "1.0"
-serde = "1.0"
-serde_derive = "1.0"
+clap = { version = "2.0", features = ["yaml"] }
