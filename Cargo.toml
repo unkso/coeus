@@ -1,0 +1,17 @@
+[package]
+name = "coeus"
+version = "0.1.0"
+authors = ["Eric Dattore <eric@dattore.me>"]
+
+[lib]
+name = "libcoeus"
+path = "src/lib.rs"
+
+[[bin]]
+name = "coeus"
+path = "src/bin/coeus_cli.rs"
+
+[dependencies]
+docopt = "1.0"
+serde = "1.0"
+serde_derive = "1.0"
