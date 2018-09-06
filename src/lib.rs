@@ -2,6 +2,8 @@
 
 #[macro_use] extern crate diesel;
 extern crate regex;
+extern crate reqwest;
+extern crate serde_json;
 
 /// Parses the fetched sources for identifying lists of players
 mod parser;
@@ -11,7 +13,7 @@ mod fetcher;
 mod cohort;
 /// Contains functionality relating to identifying candidates for the Unknown Soldiers
 mod identifier;
-/// Contains the data models that are persisted
+/// Contains data models
 mod models;
 /// Contains the description of the data persistence layer
 mod schema;

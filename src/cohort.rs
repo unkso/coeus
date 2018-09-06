@@ -1,18 +1,8 @@
-use diesel::{prelude::*, result::Error};
 use super::schema::cohort;
+use super::models::{Cohort, NewCohort};
+
+use diesel::{prelude::*, result::Error};
 use schema::cohort::dsl::*;
-
-#[derive(Insertable)]
-#[table_name = "cohort"]
-pub struct NewCohort<'a> {
-    pub name: &'a str,
-}
-
-#[derive(Debug, Queryable)]
-pub struct Cohort {
-    pub id: i32,
-    pub name: String,
-}
 
 impl Cohort {
     pub fn new_with_name(cohort_name: &str, conn: &SqliteConnection) -> Result<Self, Error> {
@@ -37,7 +27,7 @@ mod test {
     extern crate diesel_migrations;
 
     use super::Cohort;
-    use diesel::{Connection, SqliteConnection, result::Error};
+    use diesel::{Connection, SqliteConnection};
     use self::diesel_migrations::run_pending_migrations;
 
     fn setup() -> SqliteConnection {
@@ -54,7 +44,6 @@ mod test {
         let conn = setup();
         let cohort = Cohort::new_with_name("test", &conn);
 
-        println!("{:#?}", cohort);
         assert!(cohort.is_ok());
         assert_eq!(cohort.unwrap().name, "test");
     }

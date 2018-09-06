@@ -1,17 +1,16 @@
-use std::io;
-use regex::{self, Regex};
+use regex::{Regex};
 
 pub struct Parser {
     name_regex: Regex,
 }
 
 impl Parser {
-    pub fn new() -> Result<Self, regex::Error> {
-        let name_regex = Regex::new(r#"<div class="player">\s*<a.*>(?P<name>.*)</a>\s*</div>"#)?;
+    pub fn new() -> Self {
+        let name_regex = Regex::new(r#"<div class="player">\s*<a.*>(?P<name>.*)</a>\s*</div>"#).unwrap();
 
-        Ok(Parser {
+        Parser {
             name_regex,
-        })
+        }
     }
 
     pub fn parse(&self, text: &str) -> Vec<Player> {
@@ -79,7 +78,7 @@ mod test {
 
     #[test]
     fn it_fetches_the_player_name() {
-        let parser = Parser::new().unwrap();
+        let parser = Parser::new();
         let result = parser.parse(HTML_FIXTURE);
 
         result
