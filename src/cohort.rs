@@ -1,8 +1,6 @@
-use super::schema::cohort;
+use super::schema::cohort::{self, dsl::*};
 use super::models::{Cohort, NewCohort};
-
 use diesel::{prelude::*, result::Error};
-use schema::cohort::dsl::*;
 
 impl Cohort {
     pub fn new_with_name(cohort_name: &str, conn: &SqliteConnection) -> Result<Self, Error> {
