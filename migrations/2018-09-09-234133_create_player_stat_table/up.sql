@@ -1,5 +1,5 @@
 -- Your SQL goes here
-CREATE TABLE IF NOT EXISTS `player`(
+CREATE TABLE IF NOT EXISTS `players`(
     `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `cohort_id` INTEGER NOT NULL,
     `name` VARCHAR(40) NOT NULL,

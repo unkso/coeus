@@ -1,7 +1,9 @@
-use super::schema::player;
-use super::schema::cohort;
+use super::schema::players::{self, dsl::*};
+use super::schema::cohorts;
 
-#[derive(Debug, Queryable)]
+use diesel::{Connection, SqliteConnection, RunQueryDsl};
+
+#[derive(Debug, Identifiable, Queryable)]
 pub struct Player {
     pub id: i32,
     pub cohort_id: i32,
@@ -19,7 +21,7 @@ pub struct Player {
 }
 
 #[derive(Insertable)]
-#[table_name = "player"]
+#[table_name = "players"]
 pub struct NewPlayer<'a> {
     pub cohort_id: i32,
     pub name: &'a str,
@@ -36,7 +38,7 @@ pub struct NewPlayer<'a> {
 }
 
 #[derive(Insertable)]
-#[table_name = "cohort"]
+#[table_name = "cohorts"]
 pub struct NewCohort<'a> {
     pub name: &'a str,
 }
@@ -45,4 +47,10 @@ pub struct NewCohort<'a> {
 pub struct Cohort {
     pub id: i32,
     pub name: String,
+}
+
+impl Player {
+    pub fn all(conn: &SqliteConnection) -> Vec<Self> {
+        players.load::<Player>(conn).expect("Could not fetch all players")
+    }
 }

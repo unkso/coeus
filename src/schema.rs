@@ -1,12 +1,12 @@
 table! {
-    cohort (id) {
+    cohorts (id) {
         id -> Integer,
         name -> Text,
     }
 }
 
 table! {
-    player (id) {
+    players (id) {
         id -> Integer,
         cohort_id -> Integer,
         name -> Text,
@@ -24,6 +24,6 @@ table! {
 }
 
 allow_tables_to_appear_in_same_query!(
-    cohort,
-    player,
+    cohorts,
+    players,
 );

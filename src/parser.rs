@@ -1,36 +1,28 @@
-use regex::{Regex};
+use regex::Regex;
+
+lazy_static! {
+    static ref NAME_REGEX: Regex = Regex::new(r#"<div class="player">\s*<a.*>(?P<name>.*)</a>\s*</div>"#).unwrap();
+}
 
 pub struct Parser {
     name_regex: Regex,
 }
 
 impl Parser {
-    pub fn new() -> Self {
-        let name_regex = Regex::new(r#"<div class="player">\s*<a.*>(?P<name>.*)</a>\s*</div>"#).unwrap();
-
-        Parser {
-            name_regex,
-        }
-    }
-
-    pub fn parse(&self, text: &str) -> Vec<Player> {
-        let name_captures = self.name_regex.captures_iter(text);
+    pub fn parse(text: &str) -> Vec<String> {
+        let name_captures = NAME_REGEX.captures_iter(text);
 
         name_captures
             .map(|captures| captures
                 .name("name")
                 .and_then(|result| Some(result.as_str()))
                 .map(|player_name|
-                    Player { name: player_name.to_string() }
+                    player_name.to_string()
                 )
             )
             .filter_map(|p| p)
-            .collect::<Vec<Player>>()
+            .collect::<Vec<String>>()
     }
-}
-
-pub struct Player {
-    name: String,
 }
 
 #[cfg(test)]
@@ -78,14 +70,13 @@ mod test {
 
     #[test]
     fn it_fetches_the_player_name() {
-        let parser = Parser::new();
-        let result = parser.parse(HTML_FIXTURE);
+        let result = Parser::parse(HTML_FIXTURE);
 
         result
             .iter()
             .zip(EXPECTED_NAMES.iter())
             .for_each(|(actual, expected)|
-                assert_eq!(actual.name, *expected)
+                assert_eq!(actual, *expected)
             );
     }
 }

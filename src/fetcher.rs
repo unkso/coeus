@@ -1,4 +1,5 @@
-use super::schema::player;
+use super::schema::players;
+use super::parser::Parser;
 use diesel::{prelude::*, result::Error};
 
 use serde_json::Value;
@@ -20,12 +21,17 @@ impl NameFetcher {
 }
 
 impl Iterator for NameFetcher {
-    type Item = String;
+    type Item = Vec<String>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let uri = format!("{}?page={}", self.base_uri, self.page_pos);
         self.page_pos += 1;
-        reqwest::get(&uri).and_then(|mut result| result.text()).ok()
+        let response= reqwest::get(&uri)
+            .and_then(|mut result| result.text())
+            .expect("unable to fetch response");
+
+        let result = Parser::parse(&response);
+        if result.len() > 0 { Some(result) } else { None }
     }
 }
 
@@ -124,7 +130,7 @@ impl<'a> NewPlayer<'a> {
             }
         }).collect::<Vec<NewPlayer>>();
 
-        ::diesel::insert_into(player::table).values(new_players).execute(conn)
+        ::diesel::insert_into(players::table).values(new_players).execute(conn)
     }
 }
 
