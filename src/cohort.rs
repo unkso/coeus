@@ -1,4 +1,4 @@
-use super::schema::cohort::{self, dsl::*};
+use super::schema::cohorts::{self, dsl::*};
 use super::models::{Cohort, NewCohort};
 use diesel::{prelude::*, result::Error};
 
@@ -6,16 +6,16 @@ impl Cohort {
     pub fn new_with_name(cohort_name: &str, conn: &SqliteConnection) -> Result<Self, Error> {
         let new_cohort = NewCohort { name: cohort_name };
 
-        ::diesel::insert_into(cohort::table)
+        ::diesel::insert_into(cohorts::table)
             .values(&new_cohort)
             .execute(conn)
             .and_then(|ret_id| {
-                cohort.filter(id.eq(ret_id as i32)).get_result(conn)
+                cohorts.filter(id.eq(ret_id as i32)).get_result(conn)
             })
     }
 
     pub fn delete(&self, conn: &SqliteConnection) -> Result<usize, Error> {
-        ::diesel::delete(cohort.filter(name.eq(&self.name)))
+        ::diesel::delete(cohorts.filter(name.eq(&self.name)))
             .execute(conn)
     }
 }

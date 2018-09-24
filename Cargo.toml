@@ -18,6 +18,8 @@ diesel = { version = "1.0", features = ["sqlite"] }
 regex = "1.0"
 reqwest = "0.8"
 serde_json = "1.0"
+csv = "1.0.1"
+lazy_static = "1.1.0"
 
 [dev-dependencies]
 diesel_migrations = { version = "1.0", features = ["sqlite"] }
