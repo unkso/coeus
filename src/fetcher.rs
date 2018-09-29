@@ -26,7 +26,7 @@ impl Iterator for NameFetcher {
     fn next(&mut self) -> Option<Self::Item> {
         let uri = format!("{}?page={}", self.base_uri, self.page_pos);
         self.page_pos += 1;
-        let response= reqwest::get(&uri)
+        let response = reqwest::get(&uri)
             .and_then(|mut result| result.text())
             .expect("unable to fetch response");
 
@@ -99,6 +99,8 @@ impl Iterator for StatFetcher {
             return None;
         }
 
+        ::std::thread::sleep_ms(100);
+
         Some((basic_stats.unwrap(), detailed_stats.unwrap()))
     }
 }
@@ -106,27 +108,31 @@ impl Iterator for StatFetcher {
 impl<'a> NewPlayer<'a> {
     pub fn bulk_insert(player_stats: Vec<(Value, Value)>, conn: &SqliteConnection) -> Result<usize, Error> {
         let new_players = player_stats.iter().map(|(basic, detailed)| {
-            let gamemode_score = detailed["result"]["gameModeStats"]
-                .as_array()
-                .expect("unable to convert game mode stats to array")
-                .iter()
-                .fold(0.0, |acc, v|
-                    acc + v["score"].as_f64().expect("could not convert score to f64") as f32
-                );
+            let gamemode_score = if detailed["result"]["gameModeStats"].is_array() {
+                detailed["result"]["gameModeStats"]
+                    .as_array()
+                    .expect("unable to convert game mode stats to array")
+                    .iter()
+                    .fold(0.0, |acc, v|
+                        acc + v["score"].as_f64().expect("could not convert score to f64") as f32,
+                    )
+            } else {
+                0.0
+            };
 
             NewPlayer {
                 cohort_id: 1, // TODO: Change this to the proper Cohort ID later
-                name: basic["profile"]["displayName"].as_str().expect("unable to convert displayName to string"),
-                rank: basic["result"]["rank"]["number"].as_i64().expect("unable to convert rank to i32") as i32,
-                revives: detailed["result"]["revives"].as_f64().expect("unable to convert revives to f64") as f32,
-                repairs: detailed["result"]["repairs"].as_f64().expect("unable to convert repairs to f64") as f32,
-                heals: detailed["result"]["heals"].as_f64().expect("unable to convert heals to f64") as f32,
-                rounds_played: detailed["result"]["roundsPlayed"].as_i64().expect("unable to convert rounds played to i64") as i32,
-                squad_score: detailed["result"]["squadScore"].as_f64().expect("unable to convert squad score to f64") as f32,
-                flag_captures: detailed["result"]["flagsCaptured"].as_i64().expect("unable to convert flags captured to i64") as i32,
-                flag_defends: detailed["result"]["flagsDefended"].as_i64().expect("unable to convert flags defended to i64") as i32,
+                name: basic["profile"]["displayName"].as_str().unwrap_or("NAME NOT FOUND"),
+                rank: basic["result"]["rank"]["number"].as_i64().unwrap_or(0) as i32,
+                revives: detailed["result"]["revives"].as_f64().unwrap_or(0.0) as f32,
+                repairs: detailed["result"]["repairs"].as_f64().unwrap_or(0.0) as f32,
+                heals: detailed["result"]["heals"].as_f64().unwrap_or(0.0) as f32,
+                rounds_played: detailed["result"]["roundsPlayed"].as_i64().unwrap_or(0) as i32,
+                squad_score: detailed["result"]["squadScore"].as_f64().unwrap_or(0.0) as f32,
+                flag_captures: detailed["result"]["flagsCaptured"].as_i64().unwrap_or(0) as i32,
+                flag_defends: detailed["result"]["flagsDefended"].as_i64().unwrap_or(0) as i32,
                 gamemode_score,
-                time_played: basic["result"]["timePlayed"].as_i64().expect("unable to convert time played to i64") as i32,
+                time_played: basic["result"]["timePlayed"].as_i64().unwrap_or(0) as i32,
             }
         }).collect::<Vec<NewPlayer>>();
 
@@ -155,9 +161,14 @@ mod test {
     #[test]
     fn it_fetches_pages_of_player_names() {
         let fetcher = NameFetcher::new();
-        let page_strings = fetcher.take(2).collect::<Vec<String>>();
+        let page_strings = fetcher
+            .take(2)
+            .fold(Vec::new(), |mut acc, mut val| {
+                acc.append(&mut val);
+                acc
+            });
 
-        assert_eq!(2, page_strings.len());
+        assert_eq!(199, page_strings.len());
         assert_ne!(page_strings[0], page_strings[1]);
     }
 
